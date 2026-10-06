@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "AuthPortal"
+rootProject.name = "Lifeline"
 
 include(":app")

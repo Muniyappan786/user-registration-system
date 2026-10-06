@@ -1,48 +1,45 @@
-# AuthPortal - Dynamic Authentication & Secure Dashboard System
+# Lifeline - Blood Availability & Emergency Donor System
 
-A production-grade web application featuring user registration, client-side persistence via `localStorage`, credential authentication, and an interactive Secure Profile Dashboard with specialized Blood Group ID and medical donor insights.
+A complete web and Android application featuring a secure user authentication system, real-time donor directory, emergency availability status toggle, and blood compatibility intelligence.
 
-Built entirely with **HTML5**, **CSS3**, and **Vanilla JavaScript (ES6+)** with **zero external dependencies**. Ready to publish instantly on **GitHub Pages** or run natively inside Android via WebView.
-
----
-
-## 🚀 Key Features
-
-### 1. User Registration (Sign Up)
-- **Required Fields:**
-  - **Full Name** (validated)
-  - **Email Address** (regex format validation, unique check)
-  - **Password** (minimum 6 characters, live strength meter, show/hide toggle)
-  - **Mobile Number** (7–15 digits, international format supported)
-  - **Blood Group Dropdown:** Full medical spectrum: `A+`, `A-`, `B+`, `B-`, `O+`, `O-`, `AB+`, `AB-`.
-- **Session & Storage:** Stored directly into browser `localStorage` as structured records.
-- **Empty-by-Default:** Starts completely empty with **zero pre-loaded mock accounts**, guaranteeing an authentic fresh experience.
-
-### 2. User Login (Sign In)
-- **Authentication:** Validates entered Email & Password against local accounts.
-- **Security Feedback:** Friendly error messaging with animated shake effect on mismatch.
-- **Instant Redirection:** Smoothly transitions into the secure dashboard upon successful validation.
-
-### 3. Secure Dashboard
-- **Profile Overview:** Displays Full Name, Email, Mobile Number, Member ID, and Account Created timestamp.
-- **Explicit Blood Group Card:** 
-  - Dynamic Rh-factor details
-  - Universal donor/recipient classification badges
-  - Red blood cell donor compatibility matrix ("Can Donate To" / "Can Receive From")
-  - Printable / Downloadable Emergency Medical ID Card modal
-- **Logout Action:** Securely clears current session and redirects back to Sign In.
-- **Storage Management:** Live registry counter and clean "Reset / Clear All Records" option to test empty state anytime.
-
-### 4. Technical Architecture
-- **Single-Page Application (SPA):** Hashless fluid view switching.
-- **Modern UI/UX:** Glassmorphism, smooth CSS transitions, dark/light mode toggle.
-- **Zero Dependencies:** No frameworks or CDNs required; fully functional offline.
+Built with **HTML5, CSS3, and Vanilla JavaScript** with **zero external dependencies**, ready to run directly in any modern browser, publish to **GitHub Pages**, or install as an Android app.
 
 ---
 
-## 🌐 Deploy to GitHub Pages
+## 🩸 Core Features
+
+### 1. User Registration (`registerPage`)
+- **Required Fields**:
+  - **Full Name**
+  - **Email Address** (format validated, unique email verification)
+  - **Mobile Number** (strict 10-digit validation: `[0-9]{10}`)
+  - **Blood Group** (Dropdown: `A+`, `A-`, `B+`, `B-`, `O+`, `O-`, `AB+`, `AB-`)
+  - **Password** (min 6 characters)
+- **Local Persistence**: Saved locally via browser `localStorage`.
+- **Zero Pre-loaded Data**: Starts completely empty so you can test registration from scratch.
+
+### 2. User Authentication (`loginPage`)
+- Validates credentials against registered users in `localStorage`.
+- Context-sensitive error handling and smooth redirection into the secure dashboard.
+
+### 3. Secure Dashboard (`dashboardPage`)
+- **Profile Overview**: Displays Full Name, Email, 10-digit Mobile Number, and blood badge.
+- **Available for Emergency? Toggle**: 
+  - Real-time switch toggle allowing donors to set their emergency availability.
+  - Updates availability in both active session and the persistent donor directory.
+- **Transfusion Compatibility Info**: Dynamic guide indicating donor and recipient compatibility (e.g. O- universal red cell donor, AB+ universal recipient).
+- **Donor Network & Search (`action-card`)**:
+  - Filter donors by specific Blood Group or "All Blood Groups".
+  - Filter by "Show emergency available only".
+  - Interactive donor cards with direct `tel:` call link.
+  - Live stats: Total Registered Donors vs Emergency Ready.
+- **Functional Logout & Reset**: Clear session or test resetting all local records.
+
+---
+
+## 🌐 Deploying to GitHub Pages
 
 1. Push this repository to GitHub.
-2. In your repository, go to **Settings** > **Pages**.
-3. Under **Branch**, select `main` (or `master`) and folder `/ (root)`.
-4. Click **Save**. Your site will be live immediately!
+2. In your GitHub repository, open **Settings** > **Pages**.
+3. Under **Branch**, select `main` (or `master`) and directory `/ (root)`.
+4. Click **Save**. Your site will be published at `https://<username>.github.io/<repo>/`!
