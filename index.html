@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Secure and dynamic authentication portal with user registration, login, and profile dashboard.">
+  <meta name="theme-color" content="#0f172a">
+  <title>AuthPortal - Secure Login & Registration</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <!-- Decorative Background Blobs -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Main Application Wrapper -->
+  <div id="app" class="app-container">
+
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg class="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <div class="brand-droplet-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Auth<span class="text-gradient">Portal</span></span>
+          <span class="brand-tag">Secure ID & Donor Registry</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" class="icon-btn" aria-label="Toggle dark/light theme" title="Toggle Theme">
+          <svg id="theme-icon-sun" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg id="theme-icon-moon" class="icon hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <!-- Stats Counter Pill -->
+        <div id="users-pill" class="pill-badge" title="Total registered users in localStorage">
+          <span class="pill-dot"></span>
+          <span id="registered-count-text">0 Registered</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN VIEWS CONTAINER -->
+    <main class="main-content">
+
+      <!-- ============================================== -->
+      <!-- AUTHENTICATION CARD (LOGIN & REGISTER) -->
+      <!-- ============================================== -->
+      <section id="auth-section" class="auth-section">
+        <div class="auth-card glass-card">
+
+          <!-- View Tabs (Sign In / Register) -->
+          <nav class="auth-tabs" role="tablist">
+            <button id="tab-login" class="tab-btn active" role="tab" aria-selected="true" data-target="view-login">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                <polyline points="10 17 15 12 10 7"/>
+                <line x1="15" y1="12" x2="3" y2="12"/>
+              </svg>
+              <span>Sign In</span>
+            </button>
+            <button id="tab-register" class="tab-btn" role="tab" aria-selected="false" data-target="view-register">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tab-icon">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+              <span>Create Account</span>
+            </button>
+          </nav>
+
+          <!-- Notification Banner for Inline Alerts -->
+          <div id="auth-alert" class="alert-banner hide" role="alert">
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span id="auth-alert-message" class="alert-text"></span>
+          </div>
+
+          <!-- ========================================== -->
+          <!-- 1. LOGIN FORM -->
+          <!-- ========================================== -->
+          <div id="view-login" class="auth-view active">
+            <div class="view-header">
+              <h1 class="view-title">Welcome Back</h1>
+              <p class="view-subtitle">Enter your credentials to access your secure dashboard.</p>
+            </div>
+
+            <form id="login-form" novalidate autocomplete="on">
+              <!-- Email Input -->
+              <div class="form-group">
+                <label for="login-email" class="form-label">Email Address</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input 
+                    type="email" 
+                    id="login-email" 
+                    name="email" 
+                    class="form-input" 
+                    placeholder="name@example.com" 
+                    required 
+                    autocomplete="email">
+                </div>
+                <span class="field-error" id="login-email-error"></span>
+              </div>
+
+              <!-- Password Input -->
+              <div class="form-group">
+                <div class="label-row">
+                  <label for="login-password" class="form-label">Password</label>
+                  <button type="button" class="text-link-btn" id="demo-credentials-btn">Need an account?</button>
+                </div>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <input 
+                    type="password" 
+                    id="login-password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="Enter your password" 
+                    required 
+                    autocomplete="current-password">
+                  <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility" data-target="login-password">
+                    <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <svg class="eye-closed hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  </button>
+                </div>
+                <span class="field-error" id="login-password-error"></span>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" id="login-submit-btn" class="primary-btn submit-btn">
+                <span class="btn-text">Sign In to Dashboard</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </form>
+
+            <div class="auth-footer-prompt">
+              <span>Don't have an account yet?</span>
+              <button type="button" class="switch-link" id="goto-register-btn">Register now</button>
+            </div>
+          </div>
+
+          <!-- ========================================== -->
+          <!-- 2. REGISTRATION FORM -->
+          <!-- ========================================== -->
+          <div id="view-register" class="auth-view">
+            <div class="view-header">
+              <h1 class="view-title">Create Account</h1>
+              <p class="view-subtitle">Join the portal. Your profile details will be saved securely.</p>
+            </div>
+
+            <form id="register-form" novalidate autocomplete="on">
+              <!-- Full Name Input -->
+              <div class="form-group">
+                <label for="reg-fullname" class="form-label">Full Name <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input 
+                    type="text" 
+                    id="reg-fullname" 
+                    name="fullname" 
+                    class="form-input" 
+                    placeholder="e.g. Alexander Mitchell" 
+                    required 
+                    autocomplete="name">
+                </div>
+                <span class="field-error" id="reg-fullname-error"></span>
+              </div>
+
+              <!-- Email Input -->
+              <div class="form-group">
+                <label for="reg-email" class="form-label">Email Address <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input 
+                    type="email" 
+                    id="reg-email" 
+                    name="email" 
+                    class="form-input" 
+                    placeholder="alex@domain.com" 
+                    required 
+                    autocomplete="email">
+                </div>
+                <span class="field-error" id="reg-email-error"></span>
+              </div>
+
+              <!-- Mobile Number Input -->
+              <div class="form-group">
+                <label for="reg-mobile" class="form-label">Mobile Number <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <input 
+                    type="tel" 
+                    id="reg-mobile" 
+                    name="mobile" 
+                    class="form-input" 
+                    placeholder="+1 (555) 019-2834" 
+                    required 
+                    autocomplete="tel">
+                </div>
+                <span class="field-error" id="reg-mobile-error"></span>
+              </div>
+
+              <!-- Blood Group Dropdown Selector (Required: A+, A-, B+, B-, O+, O-, AB+, AB-) -->
+              <div class="form-group">
+                <div class="label-row">
+                  <label for="reg-bloodgroup" class="form-label">Blood Group <span class="required">*</span></label>
+                  <span class="form-hint">Crucial for Medical ID</span>
+                </div>
+                <div class="input-wrapper select-wrapper">
+                  <div class="blood-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                    </svg>
+                  </div>
+                  <select id="reg-bloodgroup" name="bloodgroup" class="form-input form-select" required>
+                    <option value="" disabled selected>Select Blood Group</option>
+                    <option value="A+">A+ (A RhD positive)</option>
+                    <option value="A-">A- (A RhD negative)</option>
+                    <option value="B+">B+ (B RhD positive)</option>
+                    <option value="B-">B- (B RhD negative)</option>
+                    <option value="O+">O+ (O RhD positive)</option>
+                    <option value="O-">O- (O RhD negative - Universal Red Cell Donor)</option>
+                    <option value="AB+">AB+ (AB RhD positive - Universal Recipient)</option>
+                    <option value="AB-">AB- (AB RhD negative)</option>
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </div>
+                <span class="field-error" id="reg-bloodgroup-error"></span>
+              </div>
+
+              <!-- Password Input -->
+              <div class="form-group">
+                <label for="reg-password" class="form-label">Password <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <input 
+                    type="password" 
+                    id="reg-password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="Create a strong password (min 6 chars)" 
+                    required 
+                    autocomplete="new-password">
+                  <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility" data-target="reg-password">
+                    <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <svg class="eye-closed hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  </button>
+                </div>
+                <!-- Password Strength Bar -->
+                <div class="strength-meter">
+                  <div class="strength-bars">
+                    <span class="bar" id="str-bar-1"></span>
+                    <span class="bar" id="str-bar-2"></span>
+                    <span class="bar" id="str-bar-3"></span>
+                  </div>
+                  <span class="strength-label" id="strength-label">Minimum 6 characters</span>
+                </div>
+                <span class="field-error" id="reg-password-error"></span>
+              </div>
+
+              <!-- Terms & Privacy Acknowledgement -->
+              <div class="checkbox-group">
+                <label class="custom-checkbox-label">
+                  <input type="checkbox" id="reg-terms" checked>
+                  <span class="checkbox-box"></span>
+                  <span class="checkbox-text">I confirm all information is accurate and stored locally in this browser.</span>
+                </label>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" id="register-submit-btn" class="primary-btn submit-btn">
+                <span class="btn-text">Complete Registration</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+            </form>
+
+            <div class="auth-footer-prompt">
+              <span>Already have an account?</span>
+              <button type="button" class="switch-link" id="goto-login-btn">Sign in here</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Security Guarantee Footer Note -->
+        <div class="security-pill-footer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Offline-first &amp; Private. Client-side storage via browser <code>localStorage</code>.</span>
+        </div>
+      </section>
+
+
+      <!-- ============================================== -->
+      <!-- 3. SECURE USER DASHBOARD -->
+      <!-- ============================================== -->
+      <section id="dashboard-section" class="dashboard-section hide">
+        <div class="dashboard-container">
+
+          <!-- Dashboard Header Bar -->
+          <div class="dash-top-bar glass-card">
+            <div class="dash-user-snippet">
+              <div class="avatar-circle" id="dash-avatar">--</div>
+              <div class="dash-greeting-block">
+                <div class="dash-greeting-sub">Authenticated Session</div>
+                <h2 class="dash-greeting-name" id="dash-welcome-name">User Name</h2>
+              </div>
+            </div>
+
+            <div class="dash-header-actions">
+              <div class="status-badge active-status">
+                <span class="status-dot"></span>
+                <span>Session Active</span>
+              </div>
+              <!-- LOGOUT BUTTON -->
+              <button id="logout-btn" class="logout-btn" title="Sign out of your account">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="logout-icon">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Grid -->
+          <div class="dash-grid">
+
+            <!-- Primary Profile Overview Card -->
+            <div class="profile-card glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="card-icon-wrap primary-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="card-title">Profile Credentials</h3>
+                    <p class="card-subtitle">Verified member information saved in localStorage</p>
+                  </div>
+                </div>
+                <span class="id-tag" id="dash-user-id">ID: #---</span>
+              </div>
+
+              <!-- Profile Details List -->
+              <div class="profile-details-list">
+
+                <!-- Full Name Detail -->
+                <div class="detail-row">
+                  <div class="detail-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>Full Name</span>
+                  </div>
+                  <div class="detail-value-wrapper">
+                    <span class="detail-value highlight-text" id="dash-fullname">---</span>
+                    <button class="copy-field-btn" data-copy="dash-fullname" title="Copy name" aria-label="Copy full name">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Email Detail -->
+                <div class="detail-row">
+                  <div class="detail-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <span>Email Address</span>
+                  </div>
+                  <div class="detail-value-wrapper">
+                    <span class="detail-value" id="dash-email">---</span>
+                    <button class="copy-field-btn" data-copy="dash-email" title="Copy email" aria-label="Copy email">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Mobile Detail -->
+                <div class="detail-row">
+                  <div class="detail-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span>Mobile Number</span>
+                  </div>
+                  <div class="detail-value-wrapper">
+                    <span class="detail-value font-mono" id="dash-mobile">---</span>
+                    <button class="copy-field-btn" data-copy="dash-mobile" title="Copy mobile number" aria-label="Copy mobile number">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Member Registered Date -->
+                <div class="detail-row">
+                  <div class="detail-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                      <line x1="16" y1="2" x2="16" y2="6"/>
+                      <line x1="8" y1="2" x2="8" y2="6"/>
+                      <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    <span>Account Created</span>
+                  </div>
+                  <div class="detail-value-wrapper">
+                    <span class="detail-value text-muted" id="dash-created-at">Just now</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- EXPLICIT BLOOD GROUP MEDICAL CARD (Highlight requirement) -->
+            <div class="blood-card glass-card">
+              <div class="blood-card-header">
+                <div class="blood-card-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="blood-card-title">Blood Group Identification</h3>
+                  <p class="blood-card-sub">Emergency &amp; Donor Compatibility</p>
+                </div>
+              </div>
+
+              <!-- Huge Blood Group Badge Display -->
+              <div class="blood-badge-display">
+                <div class="blood-circle-badge">
+                  <span class="blood-type-big" id="dash-bloodgroup">--</span>
+                  <span class="blood-rh-sub" id="dash-bloodgroup-rh">Rh Factor</span>
+                </div>
+                <div class="blood-meta">
+                  <span class="donor-badge" id="dash-donor-badge">Donor Status</span>
+                  <p class="donor-summary" id="dash-donor-summary">Compatibility information loaded dynamically.</p>
+                </div>
+              </div>
+
+              <!-- Medical Compatibility Matrix Box -->
+              <div class="compatibility-box">
+                <div class="compat-column">
+                  <span class="compat-title">Can Donate To</span>
+                  <span class="compat-types" id="compat-donate-to">--</span>
+                </div>
+                <div class="compat-divider"></div>
+                <div class="compat-column">
+                  <span class="compat-title">Can Receive From</span>
+                  <span class="compat-types" id="compat-receive-from">--</span>
+                </div>
+              </div>
+
+              <!-- Quick Emergency Action -->
+              <div class="blood-card-footer">
+                <button type="button" class="emergency-badge-btn" id="print-emergency-card-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                    <rect x="6" y="14" width="12" height="8"/>
+                  </svg>
+                  <span>Download / Print Medical ID</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- System Session & LocalStorage Inspector Card -->
+            <div class="storage-card glass-card">
+              <div class="card-header">
+                <div class="card-title-group">
+                  <div class="card-icon-wrap green-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="card-title">Storage &amp; Registry Insights</h3>
+                    <p class="card-subtitle">Local persistence verification in current browser</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stats-row">
+                <div class="stat-pill">
+                  <span class="stat-num" id="stat-total-users">0</span>
+                  <span class="stat-desc">Total Users in Storage</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="stat-num font-mono">localStorage</span>
+                  <span class="stat-desc">Persistence Engine</span>
+                </div>
+                <div class="stat-pill">
+                  <span class="stat-num text-success">Active</span>
+                  <span class="stat-desc">Session State</span>
+                </div>
+              </div>
+
+              <!-- Directory list snippet -->
+              <div class="registered-list-section">
+                <div class="registered-list-header">
+                  <span>Registered Users in Local Storage:</span>
+                  <button type="button" id="clear-all-data-btn" class="danger-text-btn" title="Clears localStorage to simulate fresh empty state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    <span>Clear All Records</span>
+                  </button>
+                </div>
+                <div id="registered-users-list" class="registered-users-list">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; <span id="current-year">2026</span> AuthPortal. Built with modern HTML5, CSS3 &amp; vanilla JavaScript.</p>
+    </footer>
+
+  </div>
+
+  <!-- Medical ID Printable Modal -->
+  <div id="medical-modal" class="modal-backdrop hide" role="dialog" aria-modal="true">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h3>Emergency Medical Identity Card</h3>
+        <button id="close-modal-btn" class="icon-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="printable-card-content">
+        <div class="emergency-badge-preview">
+          <div class="emergency-card-top">
+            <div class="card-brand">AuthPortal Medical Alert</div>
+            <div class="card-blood" id="modal-blood-badge">O+</div>
+          </div>
+          <div class="emergency-card-info">
+            <p><strong>Name:</strong> <span id="modal-name">---</span></p>
+            <p><strong>Blood Group:</strong> <span id="modal-blood">---</span></p>
+            <p><strong>Emergency Contact:</strong> <span id="modal-phone">---</span></p>
+            <p><strong>Email:</strong> <span id="modal-email">---</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="secondary-btn" id="modal-dismiss-btn">Close</button>
+        <button type="button" class="primary-btn" id="modal-print-btn">Print Card</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

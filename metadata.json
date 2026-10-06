@@ -1,0 +1,6 @@
+{
+  "name": "AuthPortal",
+  "description": "Dynamic Login and Registration portal with local storage session management, user profile dashboard, and blood group directory.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
